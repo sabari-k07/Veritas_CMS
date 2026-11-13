@@ -1,0 +1,37 @@
+{
+  "name": "college-management-portal",
+  "version": "1.0.0",
+  "description": "Enterprise-grade College Management Portal (CMP) built with React, Express, and Neon PostgreSQL.",
+  "private": true,
+  "scripts": {
+    "server:install": "npm --prefix server install",
+    "client:install": "npm --prefix client install",
+    "mobile:install": "npm --prefix mobile install --legacy-peer-deps",
+    "install:all": "npm run server:install && npm run client:install && npm run mobile:install",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "mobile": "npm --prefix mobile start",
+    "mobile:android": "npm --prefix mobile run android",
+    "migrate": "npm --prefix server run migrate",
+    "seed": "npm --prefix server run seed",
+    "db:setup": "npm --prefix server run db:setup",
+    "start": "npm --prefix server start",
+    "build": "npm --prefix client run build"
+  },
+  "keywords": [
+    "college-management",
+    "portal",
+    "react",
+    "express",
+    "postgresql",
+    "neon"
+  ],
+  "author": "College Management Team",
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  },
+  "dependencies": {
+    "eas": "^0.1.0"
+  }
+}
