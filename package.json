@@ -4,6 +4,7 @@
   "description": "Enterprise-grade College Management Portal (CMP) built with React, Express, and Neon PostgreSQL.",
   "private": true,
   "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm run server\" \"npm run client\"",
     "server:install": "npm --prefix server install",
     "client:install": "npm --prefix client install",
     "mobile:install": "npm --prefix mobile install --legacy-peer-deps",
@@ -29,6 +30,7 @@
   "author": "College Management Team",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^10.0.7",
     "playwright": "^1.64.1"
   },
   "dependencies": {
