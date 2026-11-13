@@ -6,8 +6,17 @@ import crypto from 'crypto';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from server directory
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Load environment variables (.env.local has higher priority than .env)
+const envPaths = [
+  path.resolve(__dirname, '../../.env.local'),
+  path.resolve(__dirname, '../.env.local'),
+  path.resolve(__dirname, '../../.env'),
+  path.resolve(__dirname, '../.env')
+];
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath });
+}
 
 const isProd = (process.env.NODE_ENV || '').toLowerCase() === 'production';
 
@@ -32,6 +41,7 @@ export const config = {
   port: process.env.PORT || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL || '',
+  databaseUrlUnpooled: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL || '',
   jwtSecret: resolvedJwtSecret,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',

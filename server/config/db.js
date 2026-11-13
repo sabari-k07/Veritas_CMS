@@ -15,10 +15,24 @@ const poolConfig = {
     : false,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
 };
 
 export const pool = new Pool(poolConfig);
+
+// Direct (unpooled) connection pool for migrations and DDL as recommended by Neon best practices
+const unpooledUrl = config.databaseUrlUnpooled || config.databaseUrl;
+const isNeonUnpooled = unpooledUrl && unpooledUrl.includes('neon.tech');
+
+export const migrationPool = new Pool({
+  connectionString: unpooledUrl,
+  ssl: (isProduction || isNeonUnpooled || unpooledUrl.includes('sslmode=require'))
+    ? { rejectUnauthorized: false }
+    : false,
+  max: 2,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 10000,
+});
 
 pool.on('error', (err) => {
   console.warn('[Database Pool Notice]: Client connection reset', err.message);

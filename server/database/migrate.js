@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { pool, testDatabaseConnection } from '../config/db.js';
+import { pool, migrationPool, testDatabaseConnection } from '../config/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +19,8 @@ async function runMigrations() {
 
   try {
     const sql = fs.readFileSync(migrationFilePath, 'utf8');
-    const client = await pool.connect();
+    // Use unpooled direct connection for DDL migrations as recommended by Neon
+    const client = await migrationPool.connect();
     try {
       await client.query('BEGIN');
       console.log('Applying schema migrations...');
@@ -37,6 +38,7 @@ async function runMigrations() {
     console.error('Failed to apply migration:', error.message);
     process.exit(1);
   } finally {
+    await migrationPool.end();
     await pool.end();
   }
 }
