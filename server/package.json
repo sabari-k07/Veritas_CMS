@@ -5,6 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "build": "echo 'Build step complete'",
     "start": "node server.js",
     "dev": "node --watch server.js",
     "migrate": "node database/migrate.js",
