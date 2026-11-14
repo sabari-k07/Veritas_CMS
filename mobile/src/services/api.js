@@ -3,8 +3,15 @@ import { STORAGE_KEYS } from '../constants/storageKeys';
 import { secureStorage } from './secureStorage';
 
 // Base API URL configuration
-const rawApiUrl = (process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:5000/api/v1').trim();
-export const API_BASE_URL = rawApiUrl.replace(/\/+$/, '');
+let rawApiUrl = (process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:5000/api/v1').trim().replace(/\/+$/, '');
+if (!rawApiUrl.endsWith('/api/v1')) {
+  if (rawApiUrl.endsWith('/api')) {
+    rawApiUrl += '/v1';
+  } else {
+    rawApiUrl += '/api/v1';
+  }
+}
+export const API_BASE_URL = rawApiUrl;
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
