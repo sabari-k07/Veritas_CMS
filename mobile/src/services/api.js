@@ -2,8 +2,9 @@ import axios from 'axios';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 import { secureStorage } from './secureStorage';
 
-// Base API URL configuration
-let rawApiUrl = (process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:5000/api/v1').trim().replace(/\/+$/, '');
+// Base API URL configuration - defaults to production Render backend for standalone release builds
+const PRODUCTION_API_URL = 'https://veritas-cms.onrender.com/api/v1';
+let rawApiUrl = (process.env.EXPO_PUBLIC_API_URL || PRODUCTION_API_URL).trim().replace(/\/+$/, '');
 if (!rawApiUrl.endsWith('/api/v1')) {
   if (rawApiUrl.endsWith('/api')) {
     rawApiUrl += '/v1';

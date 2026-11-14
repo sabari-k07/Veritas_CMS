@@ -10,6 +10,7 @@ export function Button({
   loading = false,
   style,
   textStyle,
+  icon,
 }) {
   const getButtonStyle = () => {
     switch (variant) {
@@ -39,7 +40,7 @@ export function Button({
 
   return (
     <TouchableOpacity
-      activeOpacity={0.75}
+      activeOpacity={0.8}
       onPress={onPress}
       disabled={disabled || loading}
       style={[styles.base, getButtonStyle(), disabled && styles.disabled, style]}
@@ -50,9 +51,12 @@ export function Button({
           color={variant === 'outline' ? COLORS.primary : '#FFFFFF'}
         />
       ) : (
-        <Text style={[styles.baseText, getTextStyle(), disabled && styles.disabledText, textStyle]}>
-          {title}
-        </Text>
+        <>
+          {icon ? icon : null}
+          <Text style={[styles.baseText, getTextStyle(), disabled && styles.disabledText, textStyle]}>
+            {title}
+          </Text>
+        </>
       )}
     </TouchableOpacity>
   );
@@ -60,12 +64,17 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   primary: {
     backgroundColor: COLORS.primary,
@@ -76,17 +85,23 @@ const styles = StyleSheet.create({
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.primaryLight,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   danger: {
     backgroundColor: COLORS.danger,
+    shadowColor: COLORS.danger,
   },
   disabled: {
     opacity: 0.5,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   baseText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
   primaryText: {
     color: '#FFFFFF',
@@ -101,9 +116,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   disabledText: {
-    color: COLORS.textMuted,
+    color: '#94A3B8',
   },
 });
 
 export default Button;
-

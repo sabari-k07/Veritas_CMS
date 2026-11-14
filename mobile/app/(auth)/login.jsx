@@ -12,10 +12,46 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../src/constants/colors';
 import { getRoleRoute } from '../../src/constants/roles';
 import { useAuth } from '../../src/hooks/useAuth';
 import { Card, Button } from '../../src/components';
+
+const DEMO_ACCOUNTS = [
+  {
+    role: 'ADMIN',
+    label: 'Admin',
+    icon: '🏛️',
+    email: 'admin@college.edu',
+    color: '#4F46E5',
+    bg: '#EEF2FF',
+  },
+  {
+    role: 'DEPARTMENT_STAFF',
+    label: 'HOD',
+    icon: '🏢',
+    email: 'hod.cse@college.edu',
+    color: '#16A34A',
+    bg: '#F0FDF4',
+  },
+  {
+    role: 'FACULTY',
+    label: 'Faculty',
+    icon: '👨‍🏫',
+    email: 'faculty.alan@college.edu',
+    color: '#D97706',
+    bg: '#FEF3C7',
+  },
+  {
+    role: 'STUDENT',
+    label: 'Student',
+    icon: '🎓',
+    email: 'student.alex@college.edu',
+    color: '#059669',
+    bg: '#ECFDF5',
+  },
+];
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -27,6 +63,7 @@ export default function LoginScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showForgotModal, setShowForgotModal] = useState(false);
+  const [selectedDemoRole, setSelectedDemoRole] = useState(null);
 
   // Redirect already authenticated users directly to their assigned role dashboard
   useEffect(() => {
@@ -35,6 +72,13 @@ export default function LoginScreen() {
       router.replace(destination);
     }
   }, [isLoading, isAuthenticated, user]);
+
+  const handleSelectDemo = (account) => {
+    setEmail(account.email);
+    setPassword('Password@123');
+    setSelectedDemoRole(account.role);
+    setErrorMessage('');
+  };
 
   const handleLogin = async () => {
     const trimmedEmail = email.trim();
@@ -78,20 +122,45 @@ export default function LoginScreen() {
         >
           {/* Header & Logo Banner */}
           <View style={styles.header}>
-            <View style={styles.brandIcon}>
+            <View style={styles.brandIconContainer}>
               <Text style={styles.brandIconText}>🏛️</Text>
             </View>
-            <Text style={styles.title}>College Management Portal</Text>
+            <Text style={styles.title}>Veritas Portal</Text>
             <Text style={styles.subtitle}>
-              Sign in with your verified institutional credentials to access your academic dashboard.
+              Sign in with institutional credentials to access your academic dashboard.
             </Text>
+          </View>
+
+          {/* Quick Demo Accounts Selection */}
+          <View style={styles.demoSection}>
+            <Text style={styles.demoSectionTitle}>⚡ ONE-TAP DEMO ACCOUNTS</Text>
+            <View style={styles.demoRow}>
+              {DEMO_ACCOUNTS.map((acc) => {
+                const isSelected = selectedDemoRole === acc.role;
+                return (
+                  <TouchableOpacity
+                    key={acc.role}
+                    activeOpacity={0.7}
+                    onPress={() => handleSelectDemo(acc)}
+                    style={[
+                      styles.demoPill,
+                      { backgroundColor: acc.bg, borderColor: isSelected ? acc.color : 'transparent' },
+                      isSelected && styles.demoPillSelected,
+                    ]}
+                  >
+                    <Text style={styles.demoPillIcon}>{acc.icon}</Text>
+                    <Text style={[styles.demoPillText, { color: acc.color }]}>{acc.label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
           {/* Login Form Card */}
           <Card style={styles.formCard}>
             {errorMessage ? (
               <View style={styles.errorContainer}>
-                <Text style={styles.errorIcon}>⚠️</Text>
+                <Ionicons name="alert-circle" size={18} color={COLORS.danger} style={styles.errorIcon} />
                 <Text style={styles.errorText}>{errorMessage}</Text>
               </View>
             ) : null}
@@ -99,20 +168,24 @@ export default function LoginScreen() {
             {/* Email Field */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Institutional Email</Text>
-              <TextInput
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (errorMessage) setErrorMessage('');
-                }}
-                placeholder="name@college.edu"
-                placeholderTextColor={COLORS.textMuted}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                autoComplete="email"
-                autoCorrect={false}
-                style={styles.input}
-              />
+              <View style={styles.inputWrapper}>
+                <Ionicons name="mail-outline" size={18} color={COLORS.textMuted} style={styles.inputIcon} />
+                <TextInput
+                  value={email}
+                  onChangeText={(text) => {
+                    setEmail(text);
+                    setSelectedDemoRole(null);
+                    if (errorMessage) setErrorMessage('');
+                  }}
+                  placeholder="name@college.edu"
+                  placeholderTextColor={COLORS.textMuted}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  autoComplete="email"
+                  autoCorrect={false}
+                  style={styles.input}
+                />
+              </View>
             </View>
 
             {/* Password Field */}
@@ -125,18 +198,21 @@ export default function LoginScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <TextInput
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  if (errorMessage) setErrorMessage('');
-                }}
-                placeholder="Enter password"
-                placeholderTextColor={COLORS.textMuted}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                style={styles.input}
-              />
+              <View style={styles.inputWrapper}>
+                <Ionicons name="lock-closed-outline" size={18} color={COLORS.textMuted} style={styles.inputIcon} />
+                <TextInput
+                  value={password}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    if (errorMessage) setErrorMessage('');
+                  }}
+                  placeholder="Enter password"
+                  placeholderTextColor={COLORS.textMuted}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  style={styles.input}
+                />
+              </View>
             </View>
 
             {/* Forgot Password Link */}
@@ -159,15 +235,18 @@ export default function LoginScreen() {
 
           {/* Institutional Compliance Notice */}
           <View style={styles.noticeCard}>
-            <Text style={styles.noticeHeading}>Official Institutional Access</Text>
+            <View style={styles.noticeHeaderRow}>
+              <Ionicons name="shield-checkmark-outline" size={16} color={COLORS.primary} style={{ marginRight: 6 }} />
+              <Text style={styles.noticeHeading}>Official Institutional Access</Text>
+            </View>
             <Text style={styles.noticeText}>
-              Access is restricted to authorized College Administrators, Department Staff, Faculty, and Enrolled Students. All authentication events are logged for security compliance.
+              Access is restricted to authorized College Administrators, Department Staff, Faculty, and Enrolled Students. All sessions are encrypted with secure JWT storage.
             </Text>
           </View>
 
           {/* Return to Welcome Screen */}
           <Button
-            title="Return to Welcome Screen"
+            title="← Back to Welcome Screen"
             variant="outline"
             onPress={() => router.replace('/')}
             style={styles.returnButton}
@@ -220,22 +299,30 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginVertical: 16,
+    marginTop: 8,
+    marginBottom: 20,
   },
-  brandIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 16,
+  brandIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
     backgroundColor: '#EEF2FF',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
+    borderWidth: 1.5,
+    borderColor: '#C7D2FE',
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
   },
   brandIconText: {
-    fontSize: 28,
+    fontSize: 30,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '800',
     color: COLORS.textPrimary,
     letterSpacing: -0.5,
@@ -246,32 +333,75 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
     lineHeight: 18,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+  },
+  demoSection: {
+    marginBottom: 16,
+  },
+  demoSectionTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.textSecondary,
+    letterSpacing: 0.8,
+    marginBottom: 8,
+    paddingLeft: 2,
+  },
+  demoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  demoPill: {
+    flex: 1,
+    marginHorizontal: 3,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  demoPillSelected: {
+    transform: [{ scale: 1.03 }],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  demoPillIcon: {
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  demoPillText: {
+    fontSize: 11,
+    fontWeight: '700',
   },
   formCard: {
     padding: 20,
     marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   errorContainer: {
     backgroundColor: '#FEF2F2',
     borderWidth: 1,
     borderColor: '#FECACA',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 16,
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   errorIcon: {
-    fontSize: 14,
     marginRight: 8,
-    marginTop: 1,
   },
   errorText: {
     fontSize: 13,
     color: COLORS.danger,
     lineHeight: 18,
     flex: 1,
+    fontWeight: '500',
   },
   inputGroup: {
     marginBottom: 16,
@@ -293,15 +423,24 @@ const styles = StyleSheet.create({
     color: COLORS.primaryLight,
     fontWeight: '600',
   },
-  input: {
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 48,
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: 8,
-    paddingHorizontal: 14,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#FAFAFA',
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    height: '100%',
     fontSize: 15,
     color: COLORS.textPrimary,
-    backgroundColor: COLORS.surface,
   },
   forgotPasswordContainer: {
     alignSelf: 'flex-end',
@@ -314,20 +453,26 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: '100%',
+    borderRadius: 10,
+    paddingVertical: 14,
   },
   noticeCard: {
     backgroundColor: '#F8FAFC',
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: COLORS.borderLight,
     padding: 14,
     marginBottom: 16,
   },
+  noticeHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   noticeHeading: {
     fontSize: 12,
     fontWeight: '700',
     color: COLORS.textPrimary,
-    marginBottom: 4,
   },
   noticeText: {
     fontSize: 11,
@@ -336,6 +481,7 @@ const styles = StyleSheet.create({
   },
   returnButton: {
     width: '100%',
+    borderRadius: 10,
   },
   modalOverlay: {
     flex: 1,
@@ -348,6 +494,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 24,
     alignItems: 'center',
+    borderRadius: 16,
   },
   modalIconCircle: {
     width: 56,
@@ -377,5 +524,6 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     width: '100%',
+    borderRadius: 10,
   },
 });

@@ -9,18 +9,17 @@ export function Card({ children, style }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.surface,
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    shadowColor: '#000000',
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowRadius: 8,
     elevation: 2,
-    marginBottom: 12,
+    marginBottom: 14,
   },
 });
 
 export default Card;
-

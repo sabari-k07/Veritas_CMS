@@ -12,7 +12,17 @@ export function RoleBadge({ role = USER_ROLES.STUDENT, style, textStyle }) {
   const label = ROLE_LABELS[role] || role;
 
   return (
-    <View style={[styles.badge, { backgroundColor: roleConfig.background }, style]}>
+    <View
+      style={[
+        styles.badge,
+        {
+          backgroundColor: roleConfig.background,
+          borderColor: roleConfig.accent + '33',
+        },
+        style,
+      ]}
+    >
+      <View style={[styles.indicatorDot, { backgroundColor: roleConfig.accent }]} />
       <Text style={[styles.badgeText, { color: roleConfig.accent }, textStyle]}>
         {label.toUpperCase()}
       </Text>
@@ -23,11 +33,18 @@ export function RoleBadge({ role = USER_ROLES.STUDENT, style, textStyle }) {
 const styles = StyleSheet.create({
   badge: {
     paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    borderWidth: 1,
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  indicatorDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: 6,
   },
   badgeText: {
     fontSize: 11,
@@ -37,4 +54,3 @@ const styles = StyleSheet.create({
 });
 
 export default RoleBadge;
-
